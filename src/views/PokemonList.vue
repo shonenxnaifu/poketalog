@@ -30,7 +30,6 @@
 import ListItem from '../components/ListItem'
 import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/vue-loading.css'
-import { myPokemonsRef } from '../firebaseApp'
 
 export default {
   name: 'PokemonList',
