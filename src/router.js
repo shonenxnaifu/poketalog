@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import PokemonList from './views/PokemonList.vue'
 import PokemonDetail from './views/PokemonDetail.vue'
 import MyPokemonList from './views/MyPokemonList.vue'
+import AddPokemon from './views/AddPokemon.vue'
 
 Vue.use(Router)
 
@@ -22,6 +23,11 @@ export default new Router({
       path: '/mypokemon',
       name: 'MyPokemonList',
       component: MyPokemonList
+    },
+    {
+      path: '/add-pokemon',
+      name: 'AddPokemon',
+      component: AddPokemon
     },
     {
       path: '/about',

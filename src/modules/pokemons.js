@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Pokemon from '../models/PokemonClass'
 import store from '../store'
+import { myPokemonsRef } from '../firebaseApp'
 
 export default {
   namespaced: true,
@@ -39,7 +40,13 @@ export default {
 
           for (const pokemon of resp.data.results) {
             let pokemonObj = new Pokemon(pokemon)
-            pokemonObj.owned = 0
+            myPokemonsRef.orderByChild('name').equalTo(pokemonObj.name).once('value', snap => {
+              pokemonObj.owned = 0
+              snap.forEach(event => {
+                const res = event.val()
+                pokemonObj.owned = pokemonObj.owned + res.owned
+              })
+            })
             newCollection.push(pokemonObj)
           }
 
@@ -72,6 +79,48 @@ export default {
           context.commit('setPokemon', [])
           return Promise.reject(error)
         })
+    },
+    addPokemon: async (context, param) => {
+      store.dispatch('config/setLoading', true)
+      await myPokemonsRef.push({
+        name: param.name,
+        nickname: param.nickname,
+        owned: param.qty
+      })
+      store.dispatch('config/setLoading', false)
+    },
+    updatePokemon: async (context, param) => {
+      store.dispatch('config/setLoading', true)
+      await myPokemonsRef.orderByChild('name').equalTo(param.name).once('value', snap => {
+        snap.ref.update({
+          owned: param.qty
+        })
+      })
+      store.dispatch('config/setLoading', false)
+    },
+    getMyList: async (context) => {
+      const newCollection = []
+      store.dispatch('config/setLoading', true)
+      await myPokemonsRef.once('value', snap => {
+        snap.forEach(event => {
+          let pokemonObj = new Pokemon(event.val())
+          newCollection.push(pokemonObj)
+        })
+      })
+
+      context.commit('setPokemons', newCollection)
+      store.dispatch('config/setLoading', false)
+    },
+    release: async (context, param) => {
+      store.dispatch('config/setLoading', true)
+      let key = ''
+      await myPokemonsRef.orderByChild('nickname').equalTo(param.name).once('value', snap => {
+        snap.forEach(event => {
+          key = event.key
+        })
+      })
+      await myPokemonsRef.child(key).remove()
+      store.dispatch('config/setLoading', false)
     }
   }
 }
