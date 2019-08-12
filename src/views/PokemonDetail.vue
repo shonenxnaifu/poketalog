@@ -4,9 +4,12 @@
       :is-full-page="true"
       :background-color="'#F6F6F6'"
       :color="'#dc3545'"></loading>
+    <b-alert class="mt-2" v-model="showAlert" variant="danger" dismissible>
+      failed to catch pokemon!! try again!!
+    </b-alert>
     <b-row>
       <b-col cols="12" class="text-center">
-        <b-card class="mt-3">
+        <b-card class="mt-2">
           <b-card-body>
             <b-card-title class="text-capitalize">{{$store.getters['pokemons/pokemon'].name}}</b-card-title>
             <b-img-lazy fluid :blank-color="'#EDE9E9'" :height="50" :src="`${ getImage() }`"></b-img-lazy>
@@ -17,7 +20,7 @@
           </b-list-group>
           <b-card-footer>
             <b-button to="/" class="mr-2" variant="secondary">Back</b-button>
-            <b-button href="#" class="ml-2" variant="success">Catch!!</b-button>
+            <b-button href="#" @click="catchPoke()" class="ml-2" variant="success">Catch!!</b-button>
           </b-card-footer>
         </b-card>
       </b-col>
@@ -30,6 +33,11 @@ import Loading from 'vue-loading-overlay'
 
 export default {
   name: 'PokemonDetail',
+  data () {
+    return {
+      showAlert: false
+    }
+  },
   created () {
     this.$store.dispatch('pokemons/getDetail', this.$route.params.name)
   },
@@ -65,6 +73,15 @@ export default {
       } else {
         return '-'
       }
+    },
+    catchPoke () {
+      const rand = Math.random()
+      if (rand > 0.5) {
+        this.$router.push('/add-pokemon')
+      } else {
+        this.showAlert = true
+      }
+      // myPokemonsRef.push({ name: 'poke test 2' })
     }
   }
 }
