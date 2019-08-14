@@ -1,5 +1,8 @@
 # poketalog
 
+## Live Demo
+http://poketalog.herokuapp.com
+
 ## Project setup
 ```
 npm install
